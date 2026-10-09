@@ -1,11 +1,33 @@
 import 'models.dart';
 
-const _months = ['jan', 'feb', 'mar', 'apr', 'maj', 'jun', 'jul', 'avg', 'sep', 'okt', 'nov', 'dec'];
-const _weekdays = ['ponedeljak', 'utorak', 'sreda', 'četvrtak', 'petak', 'subota', 'nedelja'];
+const _months = [
+  'jan',
+  'feb',
+  'mar',
+  'apr',
+  'maj',
+  'jun',
+  'jul',
+  'avg',
+  'sep',
+  'okt',
+  'nov',
+  'dec'
+];
+const _weekdays = [
+  'ponedeljak',
+  'utorak',
+  'sreda',
+  'četvrtak',
+  'petak',
+  'subota',
+  'nedelja'
+];
 const weekdaysShort = ['pon', 'uto', 'sre', 'čet', 'pet', 'sub', 'ned'];
 
 /// Srpski format: decimalni zarez.
-String fmtD(double v, [int decimals = 1]) => v.toStringAsFixed(decimals).replaceAll('.', ',');
+String fmtD(double v, [int decimals = 1]) =>
+    v.toStringAsFixed(decimals).replaceAll('.', ',');
 
 /// Tačka za hiljade: 1.510
 String fmtI(int v) {

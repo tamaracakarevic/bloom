@@ -19,7 +19,8 @@ Future<void> main() async {
   runApp(AppScope(state: state, child: const BloomApp()));
 }
 
-const _serbianLatin = Locale.fromSubtags(languageCode: 'sr', scriptCode: 'Latn');
+const _serbianLatin =
+    Locale.fromSubtags(languageCode: 'sr', scriptCode: 'Latn');
 
 class BloomApp extends StatelessWidget {
   const BloomApp({super.key});
@@ -71,7 +72,8 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    WidgetsBinding.instance.addPostFrameCallback((_) => AppScope.of(context).syncSteps(_day));
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => AppScope.of(context).syncSteps(_day));
   }
 
   @override
@@ -138,9 +140,12 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
         onDestinationSelected: (i) => setState(() => _tab = i),
         destinations: const [
           NavigationDestination(icon: Icon(Icons.home_rounded), label: 'Danas'),
-          NavigationDestination(icon: Icon(Icons.straighten_rounded), label: 'Merenja'),
-          NavigationDestination(icon: Icon(Icons.insights_rounded), label: 'Napredak'),
-          NavigationDestination(icon: Icon(Icons.person_rounded), label: 'Profil'),
+          NavigationDestination(
+              icon: Icon(Icons.straighten_rounded), label: 'Merenja'),
+          NavigationDestination(
+              icon: Icon(Icons.insights_rounded), label: 'Napredak'),
+          NavigationDestination(
+              icon: Icon(Icons.person_rounded), label: 'Profil'),
         ],
       ),
     );

@@ -81,7 +81,9 @@ class Profile {
         goalWeightKg: goalWeightKg != null ? goalWeightKg() : this.goalWeightKg,
         activity: activity ?? this.activity,
         pace: pace ?? this.pace,
-        manualTargetKcal: manualTargetKcal != null ? manualTargetKcal() : this.manualTargetKcal,
+        manualTargetKcal: manualTargetKcal != null
+            ? manualTargetKcal()
+            : this.manualTargetKcal,
         startEpochDay: startEpochDay,
         reminderEnabled: reminderEnabled ?? this.reminderEnabled,
       );
@@ -105,7 +107,8 @@ class Profile {
         heightCm: (j['heightCm'] as num).toDouble(),
         startWeightKg: (j['startWeightKg'] as num).toDouble(),
         goalWeightKg: (j['goalWeightKg'] as num?)?.toDouble(),
-        activity: _enumOr(ActivityLevel.values, j['activity'] as String?, ActivityLevel.light),
+        activity: _enumOr(ActivityLevel.values, j['activity'] as String?,
+            ActivityLevel.light),
         pace: _enumOr(Pace.values, j['pace'] as String?, Pace.steady),
         manualTargetKcal: (j['manualTargetKcal'] as num?)?.toInt(),
         startEpochDay: (j['startEpochDay'] as num).toInt(),
@@ -233,7 +236,8 @@ class AppData {
         'version': 1,
         'profile': profile?.toJson(),
         'entries': entries.map((e) => e.toJson()).toList(),
-        'days': (days.values.toList()..sort((a, b) => a.epochDay.compareTo(b.epochDay)))
+        'days': (days.values.toList()
+              ..sort((a, b) => a.epochDay.compareTo(b.epochDay)))
             .map((d) => d.toJson())
             .toList(),
       };
@@ -246,7 +250,9 @@ class AppData {
     final days = ((j['days'] as List?) ?? [])
         .map((d) => DayLog.fromJson(d as Map<String, dynamic>));
     return AppData(
-      profile: j['profile'] == null ? null : Profile.fromJson(j['profile'] as Map<String, dynamic>),
+      profile: j['profile'] == null
+          ? null
+          : Profile.fromJson(j['profile'] as Map<String, dynamic>),
       entries: entries,
       days: {for (final d in days) d.epochDay: d},
     );
@@ -255,7 +261,8 @@ class AppData {
 
 final _epoch = DateTime.utc(1970);
 
-int epochDayOf(DateTime d) => DateTime.utc(d.year, d.month, d.day).difference(_epoch).inDays;
+int epochDayOf(DateTime d) =>
+    DateTime.utc(d.year, d.month, d.day).difference(_epoch).inDays;
 
 /// Lokalni datum (ponoć) za dati dan.
 DateTime dateOf(int epochDay) {

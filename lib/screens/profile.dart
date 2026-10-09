@@ -50,7 +50,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final age = parseNumber(_age.text)?.toInt();
     final height = parseNumber(_height.text);
     final manual = parseNumber(_manual.text)?.toInt();
-    final valid = age != null && age >= 14 && age <= 99 && height != null && height >= 120 && height <= 230 &&
+    final valid = age != null &&
+        age >= 14 &&
+        age <= 99 &&
+        height != null &&
+        height >= 120 &&
+        height <= 230 &&
         (!_useManual || (manual != null && manual >= 800));
     final edited = valid
         ? profile.copyWith(
@@ -76,12 +81,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const ScreenTitle('Profil'),
           const SizedBox(height: 16),
           BloomCard(
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               const CardTitle('Kalorijski cilj', emoji: '🎯'),
               LegendRow(
                 color: BloomColors.outline,
                 label: 'Bazalni metabolizam',
-                value: '${fmtI(Calc.bmr(weight, edited.heightCm, edited.age).round())} kcal',
+                value:
+                    '${fmtI(Calc.bmr(weight, edited.heightCm, edited.age).round())} kcal',
               ),
               LegendRow(
                 color: BloomColors.secondary,
@@ -94,12 +101,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 value: '${fmtI(Calc.suggestedTarget(edited, weight))} kcal',
               ),
               const SizedBox(height: 6),
-              Text('Računato za tvoju poslednju kilažu (${fmtD(weight)} kg) — ažurira se sa svakim merenjem.',
+              Text(
+                  'Računato za tvoju poslednju kilažu (${fmtD(weight)} kg) — ažurira se sa svakim merenjem.',
                   style: t.bodySmall),
               const SizedBox(height: 8),
               Row(children: [
-                Expanded(child: Text('Ručno postavljen cilj', style: t.titleMedium)),
-                Switch(value: _useManual, onChanged: (v) => setState(() => _useManual = v)),
+                Expanded(
+                    child: Text('Ručno postavljen cilj', style: t.titleMedium)),
+                Switch(
+                    value: _useManual,
+                    onChanged: (v) => setState(() => _useManual = v)),
               ]),
               if (_useManual)
                 NumberField(
@@ -108,13 +119,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   suffix: 'kcal',
                   decimal: false,
                   onChanged: refresh,
-                  errorText: manual != null && manual < 800 ? 'Najmanje 800 kcal' : null,
+                  errorText: manual != null && manual < 800
+                      ? 'Najmanje 800 kcal'
+                      : null,
                 ),
             ]),
           ),
           const SizedBox(height: 16),
           BloomCard(
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               const CardTitle('O meni', emoji: '🌷'),
               TextField(
                 controller: _name,
@@ -124,12 +138,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               const SizedBox(height: 12),
               Row(children: [
-                Expanded(child: NumberField(controller: _age, label: 'Godine', decimal: false, onChanged: refresh)),
+                Expanded(
+                    child: NumberField(
+                        controller: _age,
+                        label: 'Godine',
+                        decimal: false,
+                        onChanged: refresh)),
                 const SizedBox(width: 12),
-                Expanded(child: NumberField(controller: _height, label: 'Visina', suffix: 'cm', onChanged: refresh)),
+                Expanded(
+                    child: NumberField(
+                        controller: _height,
+                        label: 'Visina',
+                        suffix: 'cm',
+                        onChanged: refresh)),
               ]),
               const SizedBox(height: 12),
-              NumberField(controller: _goal, label: 'Ciljna kilaža', suffix: 'kg', onChanged: refresh),
+              NumberField(
+                  controller: _goal,
+                  label: 'Ciljna kilaža',
+                  suffix: 'kg',
+                  onChanged: refresh),
               const SizedBox(height: 16),
               Text('Aktivnost (bez šetnje)', style: t.titleMedium),
               const SizedBox(height: 8),
@@ -167,57 +195,78 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ]),
           ),
           const SizedBox(height: 16),
-          BloomCard(
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const CardTitle('Koraci i podsetnik', emoji: '👟'),
-              Row(children: [
-                Expanded(
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text('Aplikacija Zdravlje', style: t.titleMedium),
-                    Text(
-                      state.stepsLinked ? 'Povezano — koraci se čitaju automatski' : 'Nije povezano',
-                      style: t.bodySmall?.copyWith(color: state.stepsLinked ? BloomColors.mint : null),
-                    ),
+          if (state.steps.available || Reminders.supported) ...[
+            BloomCard(
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const CardTitle('Koraci i podsetnik', emoji: '👟'),
+                    if (state.steps.available)
+                      Row(children: [
+                        Expanded(
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Aplikacija Zdravlje',
+                                    style: t.titleMedium),
+                                Text(
+                                  state.stepsLinked
+                                      ? 'Povezano — koraci se čitaju automatski'
+                                      : 'Nije povezano',
+                                  style: t.bodySmall?.copyWith(
+                                      color: state.stepsLinked
+                                          ? BloomColors.mint
+                                          : null),
+                                ),
+                              ]),
+                        ),
+                        OutlinedButton(
+                          onPressed: () => state.connectSteps(widget.today),
+                          child: Text(state.stepsLinked ? 'Ponovo' : 'Poveži'),
+                        ),
+                      ]),
+                    if (state.steps.available && state.stepsLinked) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        'Ako koraci ostaju 0: Podešavanja → Zdravlje → Pristup podacima i uređaji → Bloom → uključi Koraci.',
+                        style: t.bodySmall,
+                      ),
+                    ],
+                    const SizedBox(height: 14),
+                    if (Reminders.supported)
+                      Row(children: [
+                        Expanded(
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Podsetnik za merenje',
+                                    style: t.titleMedium),
+                                Text('Obaveštenje kad prođe 7 dana',
+                                    style: t.bodySmall),
+                              ]),
+                        ),
+                        Switch(
+                          value: profile.reminderEnabled,
+                          onChanged: (on) async {
+                            if (on) await Reminders.requestPermission();
+                            state.updateProfile(
+                                profile.copyWith(reminderEnabled: on));
+                          },
+                        ),
+                      ]),
                   ]),
-                ),
-                OutlinedButton(
-                  onPressed: () => state.connectSteps(widget.today),
-                  child: Text(state.stepsLinked ? 'Ponovo' : 'Poveži'),
-                ),
-              ]),
-              if (state.stepsLinked) ...[
-                const SizedBox(height: 4),
-                Text(
-                  'Ako koraci ostaju 0: Podešavanja → Zdravlje → Pristup podacima i uređaji → Bloom → uključi Koraci.',
-                  style: t.bodySmall,
-                ),
-              ],
-              const SizedBox(height: 14),
-              Row(children: [
-                Expanded(
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text('Podsetnik za merenje', style: t.titleMedium),
-                    Text('Obaveštenje kad prođe 7 dana', style: t.bodySmall),
-                  ]),
-                ),
-                Switch(
-                  value: profile.reminderEnabled,
-                  onChanged: (on) async {
-                    if (on) await Reminders.requestPermission();
-                    state.updateProfile(profile.copyWith(reminderEnabled: on));
-                  },
-                ),
-              ]),
-            ]),
-          ),
-          const SizedBox(height: 16),
+            ),
+            const SizedBox(height: 16),
+          ],
           BloomCard(
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               const CardTitle('Rezervna kopija', emoji: '💾'),
               Text(
-                'Podaci su samo na ovom telefonu. Povremeno sačuvaj kopiju (npr. u Fajlove / iCloud Drive) — '
+                'Podaci su samo na ovom telefonu. Povremeno sačuvaj kopiju (Sačuvaj → Save to Files / iCloud Drive) — '
                 'ako obrišeš app ili promeniš telefon, odatle ih vraćaš.',
-                style: t.bodyMedium?.copyWith(color: BloomColors.onSurfaceVariant),
+                style:
+                    t.bodyMedium?.copyWith(color: BloomColors.onSurfaceVariant),
               ),
               const SizedBox(height: 12),
               Row(children: [
@@ -226,7 +275,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     builder: (btnContext) => OutlinedButton.icon(
                       onPressed: () {
                         final box = btnContext.findRenderObject() as RenderBox?;
-                        final origin = box == null ? null : box.localToGlobal(Offset.zero) & box.size;
+                        final origin = box == null
+                            ? null
+                            : box.localToGlobal(Offset.zero) & box.size;
                         state.exportBackup(origin);
                       },
                       icon: const Icon(Icons.ios_share_rounded, size: 18),
@@ -240,7 +291,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     onPressed: () async {
                       final ok = await state.importBackup();
                       if (context.mounted) {
-                        showToast(context, ok ? 'Podaci vraćeni 🌸' : 'Uvoz nije uspeo ili je otkazan');
+                        showToast(
+                            context,
+                            ok
+                                ? 'Podaci vraćeni 🌸'
+                                : 'Uvoz nije uspeo ili je otkazan');
                       }
                     },
                     icon: const Icon(Icons.download_rounded, size: 18),
@@ -251,7 +306,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 4),
               TextButton(
                 onPressed: () => _confirmReset(context),
-                child: const Text('Obriši sve podatke', style: TextStyle(color: BloomColors.coral)),
+                child: const Text('Obriši sve podatke',
+                    style: TextStyle(color: BloomColors.coral)),
               ),
             ]),
           ),
@@ -260,7 +316,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  bool _differs(Profile a, Profile b) => a.toJson().toString() != b.toJson().toString();
+  bool _differs(Profile a, Profile b) =>
+      a.toJson().toString() != b.toJson().toString();
 
   Future<void> _confirmReset(BuildContext context) async {
     final state = AppScope.of(context);
@@ -271,10 +328,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
         content: const Text(
             'Brišu se profil, sva merenja i kalorije. Ovo ne može da se vrati (osim iz rezervne kopije).'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Otkaži')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('Otkaži')),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Obriši sve', style: TextStyle(color: BloomColors.coral)),
+            child: const Text('Obriši sve',
+                style: TextStyle(color: BloomColors.coral)),
           ),
         ],
       ),

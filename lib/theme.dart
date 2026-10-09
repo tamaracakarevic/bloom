@@ -52,9 +52,14 @@ ThemeData bloomTheme() {
     outlineVariant: BloomColors.outlineVariant,
   );
 
-  const heading = TextStyle(fontWeight: FontWeight.w600, letterSpacing: -0.5, color: BloomColors.onSurface);
+  const heading = TextStyle(
+      fontFamily: 'Poppins',
+      fontWeight: FontWeight.w600,
+      letterSpacing: -0.5,
+      color: BloomColors.onSurface);
 
-  final base = ThemeData(useMaterial3: true, colorScheme: scheme, fontFamily: 'Poppins');
+  final base =
+      ThemeData(useMaterial3: true, colorScheme: scheme, fontFamily: 'Poppins');
   return base.copyWith(
     scaffoldBackgroundColor: BloomColors.background,
     textTheme: base.textTheme.copyWith(
@@ -63,12 +68,16 @@ ThemeData bloomTheme() {
       headlineMedium: heading.copyWith(fontSize: 26),
       headlineSmall: heading.copyWith(fontSize: 22),
       titleLarge: heading.copyWith(fontSize: 19, letterSpacing: -0.2),
-      titleMedium: base.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600, fontSize: 15),
-      titleSmall: base.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+      titleMedium: base.textTheme.titleMedium
+          ?.copyWith(fontWeight: FontWeight.w600, fontSize: 15),
+      titleSmall:
+          base.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
       bodyLarge: base.textTheme.bodyLarge?.copyWith(fontSize: 15),
       bodyMedium: base.textTheme.bodyMedium?.copyWith(fontSize: 13.5),
-      bodySmall: base.textTheme.bodySmall?.copyWith(fontSize: 12, color: BloomColors.onSurfaceVariant),
-      labelLarge: base.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w600),
+      bodySmall: base.textTheme.bodySmall
+          ?.copyWith(fontSize: 12, color: BloomColors.onSurfaceVariant),
+      labelLarge:
+          base.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w600),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
@@ -89,13 +98,15 @@ ThemeData bloomTheme() {
       style: FilledButton.styleFrom(
         minimumSize: const Size(0, 50),
         padding: const EdgeInsets.symmetric(horizontal: 24),
-        textStyle: const TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600, fontSize: 15),
+        textStyle: const TextStyle(
+            fontFamily: 'Poppins', fontWeight: FontWeight.w600, fontSize: 15),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         side: const BorderSide(color: BloomColors.outline),
-        textStyle: const TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600),
+        textStyle:
+            const TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600),
       ),
     ),
     navigationBarTheme: NavigationBarThemeData(
@@ -105,11 +116,17 @@ ThemeData bloomTheme() {
       labelTextStyle: WidgetStateProperty.resolveWith((states) => TextStyle(
             fontFamily: 'Poppins',
             fontSize: 12,
-            fontWeight: states.contains(WidgetState.selected) ? FontWeight.w600 : FontWeight.w500,
-            color: states.contains(WidgetState.selected) ? BloomColors.primary : BloomColors.onSurfaceVariant,
+            fontWeight: states.contains(WidgetState.selected)
+                ? FontWeight.w600
+                : FontWeight.w500,
+            color: states.contains(WidgetState.selected)
+                ? BloomColors.primary
+                : BloomColors.onSurfaceVariant,
           )),
       iconTheme: WidgetStateProperty.resolveWith((states) => IconThemeData(
-            color: states.contains(WidgetState.selected) ? BloomColors.primary : BloomColors.onSurfaceVariant,
+            color: states.contains(WidgetState.selected)
+                ? BloomColors.primary
+                : BloomColors.onSurfaceVariant,
           )),
     ),
     dialogTheme: const DialogTheme(backgroundColor: Colors.white),

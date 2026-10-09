@@ -17,10 +17,12 @@ class Calc {
   static int suggestedTarget(Profile p, double weightKg) =>
       max(minKcal, _roundTo10(maintenance(p, weightKg) - p.pace.deficit));
 
-  static int target(Profile p, double weightKg) => p.manualTargetKcal ?? suggestedTarget(p, weightKg);
+  static int target(Profile p, double weightKg) =>
+      p.manualTargetKcal ?? suggestedTarget(p, weightKg);
 
   /// ~0,5 kcal po kg telesne mase na 1000 koraka.
-  static int stepsKcal(int steps, double weightKg) => (steps * weightKg * 0.0005).round();
+  static int stepsKcal(int steps, double weightKg) =>
+      (steps * weightKg * 0.0005).round();
 
   static double bmi(double weightKg, double heightCm) {
     final m = heightCm / 100;

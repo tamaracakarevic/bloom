@@ -8,7 +8,8 @@ import 'models.dart';
 import 'theme.dart';
 
 class BloomCard extends StatelessWidget {
-  const BloomCard({super.key, required this.child, this.color = Colors.white, this.onTap});
+  const BloomCard(
+      {super.key, required this.child, this.color = Colors.white, this.onTap});
 
   final Widget child;
   final Color color;
@@ -40,7 +41,8 @@ class CardTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
         padding: const EdgeInsets.only(bottom: 12),
-        child: Text(emoji != null ? '$emoji  $text' : text, style: Theme.of(context).textTheme.titleLarge),
+        child: Text(emoji != null ? '$emoji  $text' : text,
+            style: Theme.of(context).textTheme.titleLarge),
       );
 }
 
@@ -73,7 +75,10 @@ class NumberField extends StatelessWidget {
       focusNode: focusNode,
       onChanged: onChanged,
       keyboardType: TextInputType.numberWithOptions(decimal: decimal),
-      inputFormatters: [FilteringTextInputFormatter.allow(RegExp(decimal ? r'[0-9.,]' : r'[0-9]'))],
+      inputFormatters: [
+        FilteringTextInputFormatter.allow(
+            RegExp(decimal ? r'[0-9.,]' : r'[0-9]'))
+      ],
       decoration: InputDecoration(
         labelText: label,
         suffixText: suffix,
@@ -113,7 +118,10 @@ class MeasureFields extends StatelessWidget {
                 ),
               ),
             ],
-            if (pair.length == 1) ...[const SizedBox(width: 12), const Expanded(child: SizedBox())],
+            if (pair.length == 1) ...[
+              const SizedBox(width: 12),
+              const Expanded(child: SizedBox())
+            ],
           ],
         ),
       ));
@@ -144,7 +152,9 @@ class DeltaText extends StatelessWidget {
       text = '= 0 $unit';
       color = BloomColors.onSurfaceVariant;
     }
-    return Text(text.trim(), style: TextStyle(color: color, fontWeight: FontWeight.w600, fontSize: 13));
+    return Text(text.trim(),
+        style:
+            TextStyle(color: color, fontWeight: FontWeight.w600, fontSize: 13));
   }
 }
 
@@ -171,7 +181,10 @@ class SelectableCard extends StatelessWidget {
         color: selected ? BloomColors.primaryContainer : Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: BorderSide(color: selected ? BloomColors.primaryContainer : BloomColors.outlineVariant),
+          side: BorderSide(
+              color: selected
+                  ? BloomColors.primaryContainer
+                  : BloomColors.outlineVariant),
         ),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
@@ -180,12 +193,18 @@ class SelectableCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
             child: Row(children: [
               Expanded(
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(title, style: t.titleMedium),
-                  Text(subtitle, style: t.bodyMedium?.copyWith(color: BloomColors.onSurfaceVariant)),
-                ]),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(title, style: t.titleMedium),
+                      Text(subtitle,
+                          style: t.bodyMedium
+                              ?.copyWith(color: BloomColors.onSurfaceVariant)),
+                    ]),
               ),
-              if (selected) const Icon(Icons.check_circle_rounded, color: BloomColors.primary),
+              if (selected)
+                const Icon(Icons.check_circle_rounded,
+                    color: BloomColors.primary),
             ]),
           ),
         ),
@@ -195,7 +214,11 @@ class SelectableCard extends StatelessWidget {
 }
 
 class StatPill extends StatelessWidget {
-  const StatPill({super.key, required this.label, required this.value, this.color = BloomColors.container});
+  const StatPill(
+      {super.key,
+      required this.label,
+      required this.value,
+      this.color = BloomColors.container});
 
   final String label;
   final String value;
@@ -205,7 +228,8 @@ class StatPill extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(20)),
+      decoration:
+          BoxDecoration(color: color, borderRadius: BorderRadius.circular(20)),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(label, style: Theme.of(context).textTheme.bodySmall),
         FittedBox(
@@ -219,7 +243,11 @@ class StatPill extends StatelessWidget {
 }
 
 class LegendRow extends StatelessWidget {
-  const LegendRow({super.key, required this.color, required this.label, required this.value});
+  const LegendRow(
+      {super.key,
+      required this.color,
+      required this.label,
+      required this.value});
 
   final Color color;
   final String label;
@@ -231,9 +259,15 @@ class LegendRow extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(children: [
-        Container(width: 10, height: 10, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+        Container(
+            width: 10,
+            height: 10,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
         const SizedBox(width: 10),
-        Expanded(child: Text(label, style: t.bodyMedium?.copyWith(color: BloomColors.onSurfaceVariant))),
+        Expanded(
+            child: Text(label,
+                style: t.bodyMedium
+                    ?.copyWith(color: BloomColors.onSurfaceVariant))),
         Text(value, style: t.titleMedium),
       ]),
     );
@@ -241,7 +275,12 @@ class LegendRow extends StatelessWidget {
 }
 
 class KcalRing extends StatelessWidget {
-  const KcalRing({super.key, required this.progress, required this.center, required this.below, this.size = 150});
+  const KcalRing(
+      {super.key,
+      required this.progress,
+      required this.center,
+      required this.below,
+      this.size = 150});
 
   final double progress;
   final String center;
@@ -276,7 +315,11 @@ class _RingPainter extends CustomPainter {
     const stroke = 14.0;
     final rect = Offset.zero & size;
     final arcRect = rect.deflate(stroke / 2);
-    canvas.drawArc(arcRect, 0, 2 * pi, false,
+    canvas.drawArc(
+        arcRect,
+        0,
+        2 * pi,
+        false,
         Paint()
           ..color = BloomColors.containerHigh
           ..style = PaintingStyle.stroke
@@ -315,8 +358,10 @@ class LineChart extends StatelessWidget {
   final double height;
 
   @override
-  Widget build(BuildContext context) =>
-      SizedBox(height: height, width: double.infinity, child: CustomPaint(painter: _LinePainter(points)));
+  Widget build(BuildContext context) => SizedBox(
+      height: height,
+      width: double.infinity,
+      child: CustomPaint(painter: _LinePainter(points)));
 }
 
 class _LinePainter extends CustomPainter {
@@ -324,9 +369,12 @@ class _LinePainter extends CustomPainter {
 
   final List<ChartPoint> points;
 
-  static const _label = TextStyle(fontFamily: 'Poppins', fontSize: 11, color: BloomColors.onSurfaceVariant);
+  static const _label = TextStyle(
+      fontFamily: 'Poppins', fontSize: 11, color: BloomColors.onSurfaceVariant);
 
-  TextPainter _text(String s) => TextPainter(text: TextSpan(text: s, style: _label), textDirection: TextDirection.ltr)..layout();
+  TextPainter _text(String s) => TextPainter(
+      text: TextSpan(text: s, style: _label), textDirection: TextDirection.ltr)
+    ..layout();
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -339,7 +387,8 @@ class _LinePainter extends CustomPainter {
     final pad = max((maxV - minV) * 0.2, 0.5);
     final lo = minV - pad, hi = maxV + pad;
     final minX = points.first.epochDay, maxX = points.last.epochDay;
-    double x(int d) => left + (maxX == minX ? w / 2 : (d - minX) / (maxX - minX) * w);
+    double x(int d) =>
+        left + (maxX == minX ? w / 2 : (d - minX) / (maxX - minX) * w);
     double y(double v) => top + (hi - v) / (hi - lo) * h;
 
     final grid = Paint()
@@ -349,7 +398,8 @@ class _LinePainter extends CustomPainter {
       final v = lo + (hi - lo) * i / 3;
       final yy = y(v);
       for (double xx = left; xx < size.width - right; xx += 12) {
-        canvas.drawLine(Offset(xx, yy), Offset(min(xx + 6, size.width - right), yy), grid);
+        canvas.drawLine(
+            Offset(xx, yy), Offset(min(xx + 6, size.width - right), yy), grid);
       }
       final t = _text(fmtD(v));
       t.paint(canvas, Offset(left - t.width - 8, yy - t.height / 2));
@@ -371,7 +421,10 @@ class _LinePainter extends CustomPainter {
           ..shader = LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [BloomColors.primary.withOpacity(0.28), BloomColors.primary.withOpacity(0)],
+            colors: [
+              BloomColors.primary.withOpacity(0.28),
+              BloomColors.primary.withOpacity(0)
+            ],
           ).createShader(Rect.fromLTWH(0, top, size.width, h)),
       );
       canvas.drawPath(
@@ -390,7 +443,8 @@ class _LinePainter extends CustomPainter {
       canvas.drawCircle(c, 4, Paint()..color = BloomColors.primary);
     }
 
-    final labels = points.length == 1 ? [points.first] : [points.first, points.last];
+    final labels =
+        points.length == 1 ? [points.first] : [points.first, points.last];
     for (var i = 0; i < labels.length; i++) {
       final t = _text(formatShortDate(labels[i].epochDay));
       final cx = x(labels[i].epochDay);
@@ -414,8 +468,10 @@ class WeekBars extends StatelessWidget {
   final int target;
 
   @override
-  Widget build(BuildContext context) =>
-      SizedBox(height: 150, width: double.infinity, child: CustomPaint(painter: _BarsPainter(days, target)));
+  Widget build(BuildContext context) => SizedBox(
+      height: 150,
+      width: double.infinity,
+      child: CustomPaint(painter: _BarsPainter(days, target)));
 }
 
 class _BarsPainter extends CustomPainter {
@@ -457,7 +513,10 @@ class _BarsPainter extends CustomPainter {
       final t = TextPainter(
         text: TextSpan(
           text: weekdaysShort[dateOf(day).weekday - 1],
-          style: const TextStyle(fontFamily: 'Poppins', fontSize: 11, color: BloomColors.onSurfaceVariant),
+          style: const TextStyle(
+              fontFamily: 'Poppins',
+              fontSize: 11,
+              color: BloomColors.onSurfaceVariant),
         ),
         textDirection: TextDirection.ltr,
       )..layout();
@@ -469,7 +528,8 @@ class _BarsPainter extends CustomPainter {
         ..color = BloomColors.secondary
         ..strokeWidth = 1.5;
       for (double xx = 0; xx < size.width; xx += 18) {
-        canvas.drawLine(Offset(xx, ty), Offset(min(xx + 10, size.width), ty), p);
+        canvas.drawLine(
+            Offset(xx, ty), Offset(min(xx + 10, size.width), ty), p);
       }
     }
   }
@@ -507,10 +567,14 @@ class ScreenTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
     return Padding(
-      padding: EdgeInsets.fromLTRB(8, MediaQuery.paddingOf(context).top + 20, 8, 4),
+      padding:
+          EdgeInsets.fromLTRB(8, MediaQuery.paddingOf(context).top + 20, 8, 4),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(title, style: t.headlineLarge),
-        if (subtitle != null) Text(subtitle!, style: t.bodyMedium?.copyWith(color: BloomColors.onSurfaceVariant)),
+        if (subtitle != null)
+          Text(subtitle!,
+              style:
+                  t.bodyMedium?.copyWith(color: BloomColors.onSurfaceVariant)),
       ]),
     );
   }

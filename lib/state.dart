@@ -1,9 +1,7 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/widgets.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -33,7 +31,8 @@ class AppState extends ChangeNotifier {
         data = AppData.fromJson(jsonDecode(raw) as Map<String, dynamic>);
       } catch (_) {}
     }
-    final state = AppState._(prefs, data, prefs.getBool(_keyStepsLinked) ?? false);
+    final state =
+        AppState._(prefs, data, prefs.getBool(_keyStepsLinked) ?? false);
     Reminders.schedule(data);
     return state;
   }
@@ -45,36 +44,47 @@ class AppState extends ChangeNotifier {
     if (reschedule) Reminders.schedule(_data);
   }
 
-  void _mutateDay(int epochDay, DayLog Function(DayLog) block) =>
-      _mutate((d) => d.copyWith(days: {...d.days, epochDay: block(d.day(epochDay))}));
+  void _mutateDay(int epochDay, DayLog Function(DayLog) block) => _mutate(
+      (d) => d.copyWith(days: {...d.days, epochDay: block(d.day(epochDay))}));
 
   void completeOnboarding(Profile profile, MeasurementEntry first) =>
-      _mutate((d) => d.copyWith(profile: () => profile, entries: [first]), reschedule: true);
+      _mutate((d) => d.copyWith(profile: () => profile, entries: [first]),
+          reschedule: true);
 
-  void updateProfile(Profile profile) => _mutate((d) => d.copyWith(profile: () => profile), reschedule: true);
+  void updateProfile(Profile profile) =>
+      _mutate((d) => d.copyWith(profile: () => profile), reschedule: true);
 
   void addFood(int epochDay, String label, int kcal) => _mutateDay(
         epochDay,
         (day) => day.copyWith(foods: [
           ...day.foods,
-          FoodItem(id: DateTime.now().microsecondsSinceEpoch, label: label.trim(), kcal: kcal),
+          FoodItem(
+              id: DateTime.now().microsecondsSinceEpoch,
+              label: label.trim(),
+              kcal: kcal),
         ]),
       );
 
-  void removeFood(int epochDay, int id) =>
-      _mutateDay(epochDay, (day) => day.copyWith(foods: day.foods.where((f) => f.id != id).toList()));
+  void removeFood(int epochDay, int id) => _mutateDay(
+      epochDay,
+      (day) =>
+          day.copyWith(foods: day.foods.where((f) => f.id != id).toList()));
 
   void setManualSteps(int epochDay, int? steps) =>
       _mutateDay(epochDay, (day) => day.copyWith(manualSteps: () => steps));
 
   /// [originalDay] je datum merenja koje se menja (ako je datum promenjen, staro se briše).
   void saveEntry(MeasurementEntry entry, int? originalDay) => _mutate((d) {
-        final others = d.entries.where((e) => e.epochDay != entry.epochDay && e.epochDay != originalDay);
-        return d.copyWith(entries: [...others, entry]..sort((a, b) => a.epochDay.compareTo(b.epochDay)));
+        final others = d.entries.where(
+            (e) => e.epochDay != entry.epochDay && e.epochDay != originalDay);
+        return d.copyWith(
+            entries: [...others, entry]
+              ..sort((a, b) => a.epochDay.compareTo(b.epochDay)));
       }, reschedule: true);
 
   void deleteEntry(int epochDay) => _mutate(
-        (d) => d.copyWith(entries: d.entries.where((e) => e.epochDay != epochDay).toList()),
+        (d) => d.copyWith(
+            entries: d.entries.where((e) => e.epochDay != epochDay).toList()),
         reschedule: true,
       );
 
@@ -100,25 +110,28 @@ class AppState extends ChangeNotifier {
   }
 
   Future<void> exportBackup(Rect? origin) async {
-    final dir = await getTemporaryDirectory();
     final date = DateTime.now().toIso8601String().substring(0, 10);
-    final file = File('${dir.path}/bloom-$date.json');
-    await file.writeAsString(const JsonEncoder.withIndent('  ').convert(_data.toJson()));
+    final bytes =
+        utf8.encode(const JsonEncoder.withIndent('  ').convert(_data.toJson()));
     await SharePlus.instance.share(ShareParams(
-      files: [XFile(file.path, mimeType: 'application/json')],
+      files: [
+        XFile.fromData(bytes,
+            name: 'bloom-$date.json', mimeType: 'application/json')
+      ],
+      fileNameOverrides: ['bloom-$date.json'],
       sharePositionOrigin: origin,
     ));
   }
 
   Future<bool> importBackup() async {
     try {
-      final result = await FilePicker.platform.pickFiles(type: FileType.any, withData: true);
-      final picked = result?.files.single;
-      if (picked == null) return false;
-      final text = picked.bytes != null
-          ? utf8.decode(picked.bytes!)
-          : await File(picked.path!).readAsString();
-      final imported = AppData.fromJson(jsonDecode(text) as Map<String, dynamic>);
+      final result = await FilePicker.platform
+          .pickFiles(type: FileType.any, withData: true);
+      final bytes = result?.files.single.bytes;
+      if (bytes == null) return false;
+      final text = utf8.decode(bytes);
+      final imported =
+          AppData.fromJson(jsonDecode(text) as Map<String, dynamic>);
       if (imported.profile == null) return false;
       _mutate((_) => imported, reschedule: true);
       return true;
@@ -131,7 +144,8 @@ class AppState extends ChangeNotifier {
 }
 
 class AppScope extends InheritedNotifier<AppState> {
-  const AppScope({super.key, required AppState state, required super.child}) : super(notifier: state);
+  const AppScope({super.key, required AppState state, required super.child})
+      : super(notifier: state);
 
   static AppState of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<AppScope>()!.notifier!;

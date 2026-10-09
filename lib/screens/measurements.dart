@@ -28,21 +28,25 @@ class MeasurementsScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => openEntryEditor(context),
         icon: const Icon(Icons.add_rounded),
-        label: const Text('Novo merenje', style: TextStyle(fontWeight: FontWeight.w600)),
+        label: const Text('Novo merenje',
+            style: TextStyle(fontWeight: FontWeight.w600)),
         backgroundColor: BloomColors.primary,
         foregroundColor: Colors.white,
       ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 96),
         children: [
-          const ScreenTitle('Merenja', subtitle: 'Jednom nedeljno, isti dan, ujutru pre doručka.'),
+          const ScreenTitle('Merenja',
+              subtitle: 'Jednom nedeljno, isti dan, ujutru pre doručka.'),
           const SizedBox(height: 12),
           for (final entry in reversed)
             Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: _EntryCard(
                 entry: entry,
-                previous: entries.indexOf(entry) > 0 ? entries[entries.indexOf(entry) - 1] : null,
+                previous: entries.indexOf(entry) > 0
+                    ? entries[entries.indexOf(entry) - 1]
+                    : null,
                 isFirst: entries.indexOf(entry) == 0,
               ),
             ),
@@ -53,7 +57,8 @@ class MeasurementsScreen extends StatelessWidget {
 }
 
 class _EntryCard extends StatelessWidget {
-  const _EntryCard({required this.entry, required this.previous, required this.isFirst});
+  const _EntryCard(
+      {required this.entry, required this.previous, required this.isFirst});
 
   final MeasurementEntry entry;
   final MeasurementEntry? previous;
@@ -62,27 +67,34 @@ class _EntryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
-    final measured = Measure.values.where((m) => entry.value(m) != null).toList();
+    final measured =
+        Measure.values.where((m) => entry.value(m) != null).toList();
     return BloomCard(
       onTap: () => openEntryEditor(context, epochDay: entry.epochDay),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
           Expanded(
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(formatDate(entry.epochDay), style: t.bodySmall),
               Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                Text('${fmtD(entry.weightKg)} kg', style: numberStyle.copyWith(fontSize: 26)),
+                Text('${fmtD(entry.weightKg)} kg',
+                    style: numberStyle.copyWith(fontSize: 26)),
                 const SizedBox(width: 10),
-                if (previous != null) DeltaText(entry.weightKg - previous!.weightKg, 'kg'),
+                if (previous != null)
+                  DeltaText(entry.weightKg - previous!.weightKg, 'kg'),
                 if (isFirst)
                   Text('početak 🌱',
-                      style: t.labelLarge?.copyWith(color: BloomColors.secondary, fontWeight: FontWeight.w600)),
+                      style: t.labelLarge?.copyWith(
+                          color: BloomColors.secondary,
+                          fontWeight: FontWeight.w600)),
               ]),
             ]),
           ),
           IconButton(
             onPressed: () => _confirmDelete(context),
-            icon: const Icon(Icons.delete_outline_rounded, color: BloomColors.outline),
+            icon: const Icon(Icons.delete_outline_rounded,
+                color: BloomColors.outline),
             tooltip: 'Obriši',
           ),
         ]),
@@ -92,13 +104,19 @@ class _EntryCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 3),
             child: Row(children: [
               for (final m in measured.skip(i).take(2))
-                Expanded(child: _MeasureValue(m: m, value: entry.value(m)!, previous: previous?.value(m))),
+                Expanded(
+                    child: _MeasureValue(
+                        m: m,
+                        value: entry.value(m)!,
+                        previous: previous?.value(m))),
               if (measured.length - i == 1) const Expanded(child: SizedBox()),
             ]),
           ),
         if (entry.note.isNotEmpty) ...[
           const SizedBox(height: 8),
-          Text(entry.note, style: t.bodyMedium?.copyWith(color: BloomColors.onSurfaceVariant)),
+          Text(entry.note,
+              style:
+                  t.bodyMedium?.copyWith(color: BloomColors.onSurfaceVariant)),
         ],
       ]),
     );
@@ -110,10 +128,15 @@ class _EntryCard extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Obrisati merenje?'),
-        content: Text('Merenje od ${formatDate(entry.epochDay)} biće obrisano.'),
+        content:
+            Text('Merenje od ${formatDate(entry.epochDay)} biće obrisano.'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Otkaži')),
-          TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Obriši')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('Otkaži')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: const Text('Obriši')),
         ],
       ),
     );
@@ -122,7 +145,8 @@ class _EntryCard extends StatelessWidget {
 }
 
 class _MeasureValue extends StatelessWidget {
-  const _MeasureValue({required this.m, required this.value, required this.previous});
+  const _MeasureValue(
+      {required this.m, required this.value, required this.previous});
 
   final Measure m;
   final double value;
@@ -132,9 +156,14 @@ class _MeasureValue extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
     return Row(children: [
-      Text('${m.title} ', style: t.bodyMedium?.copyWith(color: BloomColors.onSurfaceVariant)),
-      Text(fmtD(value), style: t.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
-      if (previous != null) ...[const SizedBox(width: 6), DeltaText(value - previous!, '')],
+      Text('${m.title} ',
+          style: t.bodyMedium?.copyWith(color: BloomColors.onSurfaceVariant)),
+      Text(fmtD(value),
+          style: t.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
+      if (previous != null) ...[
+        const SizedBox(width: 6),
+        DeltaText(value - previous!, '')
+      ],
     ]);
   }
 }
@@ -152,7 +181,9 @@ class _EntryEditorScreenState extends State<EntryEditorScreen> {
   late int _day;
   final _weight = TextEditingController();
   final _note = TextEditingController();
-  final _measures = {for (final m in Measure.values) m: TextEditingController()};
+  final _measures = {
+    for (final m in Measure.values) m: TextEditingController()
+  };
   MeasurementEntry? _initial;
   MeasurementEntry? _previous;
   bool _loaded = false;
@@ -163,7 +194,9 @@ class _EntryEditorScreenState extends State<EntryEditorScreen> {
     if (_loaded) return;
     _loaded = true;
     final data = AppScope.of(context).data;
-    _initial = widget.epochDay == null ? null : data.entries.where((e) => e.epochDay == widget.epochDay).firstOrNull;
+    _initial = widget.epochDay == null
+        ? null
+        : data.entries.where((e) => e.epochDay == widget.epochDay).firstOrNull;
     _previous = data.latest;
     _day = _initial?.epochDay ?? today();
     if (_initial != null) {
@@ -181,10 +214,15 @@ class _EntryEditorScreenState extends State<EntryEditorScreen> {
   void _save() {
     final values = <String, double>{
       for (final e in _measures.entries)
-        if (parseNumber(e.value.text) != null) e.key.key: parseNumber(e.value.text)!,
+        if (parseNumber(e.value.text) != null)
+          e.key.key: parseNumber(e.value.text)!,
     };
     AppScope.of(context).saveEntry(
-      MeasurementEntry(epochDay: _day, weightKg: _weightN!, values: values, note: _note.text.trim()),
+      MeasurementEntry(
+          epochDay: _day,
+          weightKg: _weightN!,
+          values: values,
+          note: _note.text.trim()),
       _initial?.epochDay,
     );
     Navigator.pop(context);
@@ -208,8 +246,11 @@ class _EntryEditorScreenState extends State<EntryEditorScreen> {
       appBar: AppBar(
         backgroundColor: BloomColors.background,
         surfaceTintColor: Colors.transparent,
-        leading: IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close_rounded)),
-        title: Text(_initial == null ? 'Novo merenje' : 'Izmena merenja', style: t.titleLarge),
+        leading: IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(Icons.close_rounded)),
+        title: Text(_initial == null ? 'Novo merenje' : 'Izmena merenja',
+            style: t.titleLarge),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 12),
@@ -241,7 +282,9 @@ class _EntryEditorScreenState extends State<EntryEditorScreen> {
               controller: _weight,
               label: 'Kilaža',
               suffix: 'kg',
-              helper: _initial == null && _previous != null ? 'Prošli put: ${fmtD(_previous!.weightKg)} kg' : null,
+              helper: _initial == null && _previous != null
+                  ? 'Prošli put: ${fmtD(_previous!.weightKg)} kg'
+                  : null,
               onChanged: (_) => setState(() {}),
             ),
             const SizedBox(height: 20),
@@ -253,7 +296,8 @@ class _EntryEditorScreenState extends State<EntryEditorScreen> {
               controller: _note,
               maxLines: null,
               textCapitalization: TextCapitalization.sentences,
-              decoration: const InputDecoration(labelText: 'Beleška (kako se osećaš, ciklus…)'),
+              decoration: const InputDecoration(
+                  labelText: 'Beleška (kako se osećaš, ciklus…)'),
             ),
           ],
         ),

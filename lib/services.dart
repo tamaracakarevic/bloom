@@ -1,45 +1,12 @@
-import 'dart:io';
+export 'platform/steps.dart';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
-import 'package:health/health.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
 import 'models.dart';
-
-/// Koraci iz Apple Zdravlja (iPhone) ili Health Connect-a (Android).
-class StepsService {
-  final _health = Health();
-  bool _configured = false;
-
-  Future<void> _ensure() async {
-    if (_configured) return;
-    await _health.configure();
-    _configured = true;
-  }
-
-  /// iOS nikad ne javlja da li je čitanje odbijeno — tada samo stižu nule.
-  Future<bool> requestAccess() async {
-    await _ensure();
-    if (Platform.isAndroid) {
-      final status = await _health.getHealthConnectSdkStatus();
-      if (status != HealthConnectSdkStatus.sdkAvailable) {
-        await _health.installHealthConnect();
-        return false;
-      }
-    }
-    return _health.requestAuthorization(
-      [HealthDataType.STEPS],
-      permissions: [HealthDataAccess.READ],
-    );
-  }
-
-  Future<int?> stepsFor(int epochDay) async {
-    await _ensure();
-    return _health.getTotalStepsInInterval(dateOf(epochDay), dateOf(epochDay + 1));
-  }
-}
 
 /// Lokalno obaveštenje 7 dana posle poslednjeg merenja, u 10h.
 class Reminders {
@@ -47,10 +14,15 @@ class Reminders {
   static bool _ready = false;
   static const intervalDays = 7;
 
+  /// Web (iPhone početni ekran) ne podržava zakazana obaveštenja.
+  static bool get supported => !kIsWeb;
+
   static Future<void> init() async {
+    if (!supported) return;
     try {
       tzdata.initializeTimeZones();
-      tz.setLocalLocation(tz.getLocation(await FlutterTimezone.getLocalTimezone()));
+      tz.setLocalLocation(
+          tz.getLocation(await FlutterTimezone.getLocalTimezone()));
       await _plugin.initialize(const InitializationSettings(
         android: AndroidInitializationSettings('@mipmap/ic_launcher'),
         iOS: DarwinInitializationSettings(
@@ -68,10 +40,12 @@ class Reminders {
   static Future<void> requestPermission() async {
     if (!_ready) return;
     await _plugin
-        .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()
+        .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin>()
         ?.requestPermissions(alert: true, sound: true);
     await _plugin
-        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
         ?.requestNotificationsPermission();
   }
 

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="description" content="Bloom — lični dnevnik kilaže, mera i kalorija.">
+  <meta name="theme-color" content="#FFF7F9">
+
+  <!-- iPhone: radi kao aplikacija kad se doda na početni ekran -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Bloom">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>Bloom</title>
+  <link rel="manifest" href="manifest.json">
+  <style>
+    html, body { margin: 0; height: 100%; background: #FFF7F9; }
+    #splash {
+      position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+      font-size: 64px; transition: opacity .3s;
+    }
+  </style>
+</head>
+<body>
+  <div id="splash">🌸</div>
+  <script>
+    window.addEventListener('flutter-first-frame', function () {
+      var s = document.getElementById('splash');
+      if (s) { s.style.opacity = 0; setTimeout(function () { s.remove(); }, 300); }
+    });
+  </script>
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>

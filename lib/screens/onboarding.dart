@@ -25,7 +25,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final _weight = TextEditingController();
   final _goal = TextEditingController();
   final _manual = TextEditingController();
-  final _measures = {for (final m in Measure.values) m: TextEditingController()};
+  final _measures = {
+    for (final m in Measure.values) m: TextEditingController()
+  };
   var _activity = ActivityLevel.light;
   var _pace = Pace.steady;
   var _useManual = false;
@@ -36,7 +38,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   bool get _bodyValid {
     final a = _ageN, h = _heightN, w = _weightN;
-    return a != null && a >= 14 && a <= 99 && h != null && h >= 120 && h <= 230 && w != null && w >= 30 && w <= 300;
+    return a != null &&
+        a >= 14 &&
+        a <= 99 &&
+        h != null &&
+        h >= 120 &&
+        h <= 230 &&
+        w != null &&
+        w >= 30 &&
+        w <= 300;
   }
 
   bool get _canContinue => switch (_step) {
@@ -53,7 +63,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         goalWeightKg: parseNumber(_goal.text),
         activity: _activity,
         pace: _pace,
-        manualTargetKcal: _useManual ? parseNumber(_manual.text)?.toInt() : null,
+        manualTargetKcal:
+            _useManual ? parseNumber(_manual.text)?.toInt() : null,
         startEpochDay: today(),
       );
 
@@ -62,9 +73,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     await Reminders.requestPermission();
     final values = <String, double>{
       for (final e in _measures.entries)
-        if (parseNumber(e.value.text) != null) e.key.key: parseNumber(e.value.text)!,
+        if (parseNumber(e.value.text) != null)
+          e.key.key: parseNumber(e.value.text)!,
     };
-    state.completeOnboarding(_profile(), MeasurementEntry(epochDay: today(), weightKg: _weightN ?? 65, values: values));
+    state.completeOnboarding(
+        _profile(),
+        MeasurementEntry(
+            epochDay: today(), weightKg: _weightN ?? 65, values: values));
   }
 
   @override
@@ -87,7 +102,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     width: i == _step ? 26 : 8,
                     height: 8,
                     decoration: BoxDecoration(
-                      color: i <= _step ? BloomColors.primary : BloomColors.outlineVariant,
+                      color: i <= _step
+                          ? BloomColors.primary
+                          : BloomColors.outlineVariant,
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
@@ -96,15 +113,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
-                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
                 children: _content(t),
               ),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 24, 16),
               child: Row(children: [
-                if (_step > 0) TextButton(onPressed: () => setState(() => _step--), child: const Text('Nazad')),
-                if (_step == 3) TextButton(onPressed: () => setState(() => _step++), child: const Text('Preskoči')),
+                if (_step > 0)
+                  TextButton(
+                      onPressed: () => setState(() => _step--),
+                      child: const Text('Nazad')),
+                if (_step == 3)
+                  TextButton(
+                      onPressed: () => setState(() => _step++),
+                      child: const Text('Preskoči')),
                 const Spacer(),
                 FilledButton(
                   onPressed: _canContinue
@@ -137,17 +161,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             child: Container(
               width: 150,
               height: 150,
-              decoration: const BoxDecoration(gradient: headerGradient, shape: BoxShape.circle),
+              decoration: const BoxDecoration(
+                  gradient: headerGradient, shape: BoxShape.circle),
               alignment: Alignment.center,
               child: const Text('🌸', style: TextStyle(fontSize: 64)),
             ),
           ),
           const SizedBox(height: 24),
-          Text('Dobrodošla u Bloom', style: t.headlineLarge, textAlign: TextAlign.center),
+          Text('Dobrodošla u Bloom',
+              style: t.headlineLarge, textAlign: TextAlign.center),
           const SizedBox(height: 12),
           Text(
-            'Tvoj lični dnevnik kilaže, mera i kalorija. Jednom nedeljno upišeš mere, svaki dan '
-            'kalorije — a koraci stižu sami iz aplikacije Zdravlje. 💕',
+            'Tvoj lični dnevnik kilaže, mera i kalorija. Jednom nedeljno upišeš mere, a svaki dan '
+            'kalorije i korake — ja ti pokazujem koliko lepo napreduješ. 💕',
             style: t.bodyLarge?.copyWith(color: BloomColors.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
@@ -160,18 +186,36 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         ];
       case 1:
         return [
-          ..._title(t, 'Malo o tebi', 'Treba mi za proračun kalorija. Sve ostaje samo na tvom telefonu.'),
-          NumberField(controller: _age, label: 'Godine', decimal: false, onChanged: refresh),
+          ..._title(t, 'Malo o tebi',
+              'Treba mi za proračun kalorija. Sve ostaje samo na tvom telefonu.'),
+          NumberField(
+              controller: _age,
+              label: 'Godine',
+              decimal: false,
+              onChanged: refresh),
           gap,
-          NumberField(controller: _height, label: 'Visina', suffix: 'cm', onChanged: refresh),
+          NumberField(
+              controller: _height,
+              label: 'Visina',
+              suffix: 'cm',
+              onChanged: refresh),
           gap,
-          NumberField(controller: _weight, label: 'Trenutna kilaža', suffix: 'kg', onChanged: refresh),
+          NumberField(
+              controller: _weight,
+              label: 'Trenutna kilaža',
+              suffix: 'kg',
+              onChanged: refresh),
           gap,
-          NumberField(controller: _goal, label: 'Ciljna kilaža (nije obavezno)', suffix: 'kg', onChanged: refresh),
+          NumberField(
+              controller: _goal,
+              label: 'Ciljna kilaža (nije obavezno)',
+              suffix: 'kg',
+              onChanged: refresh),
         ];
       case 2:
         return [
-          ..._title(t, 'Koliko si aktivna?', 'Ne računaj šetnju — korake beležimo posebno svaki dan.'),
+          ..._title(t, 'Koliko si aktivna?',
+              'Ne računaj šetnju — korake beležimo posebno svaki dan.'),
           for (final a in ActivityLevel.values)
             SelectableCard(
               selected: _activity == a,
@@ -201,9 +245,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         final w = p.startWeightKg;
         final weeks = Calc.weeksToGoal(p, w);
         return [
-          ..._title(t, 'Tvoj plan 🌸', 'Okvirni proračun (Mifflin-St Jeor formula).'),
+          ..._title(
+              t, 'Tvoj plan 🌸', 'Okvirni proračun (Mifflin-St Jeor formula).'),
           BloomCard(
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               LegendRow(
                 color: BloomColors.outline,
                 label: 'Bazalni metabolizam',
@@ -218,23 +264,36 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               Text('Preporučeno za mršavljenje', style: t.bodySmall),
               Text(
                 '${fmtI(Calc.suggestedTarget(p.copyWith(manualTargetKcal: () => null), w))} kcal',
-                style: numberStyle.copyWith(fontSize: 34, color: BloomColors.primary),
+                style: numberStyle.copyWith(
+                    fontSize: 34, color: BloomColors.primary),
               ),
               Text('dnevno + kalorije koje zaradiš koracima',
-                  style: t.bodyMedium?.copyWith(color: BloomColors.onSurfaceVariant)),
+                  style: t.bodyMedium
+                      ?.copyWith(color: BloomColors.onSurfaceVariant)),
               if (weeks != null && weeks > 0) ...[
                 const SizedBox(height: 10),
-                Text('Do cilja okvirno ${weeksText(weeks.round())}. Polako i sigurno. ✨', style: t.bodyMedium),
+                Text(
+                    'Do cilja okvirno ${weeksText(weeks.round())}. Polako i sigurno. ✨',
+                    style: t.bodyMedium),
               ],
             ]),
           ),
           const SizedBox(height: 12),
           Row(children: [
-            Expanded(child: Text('Želim sama da postavim cilj', style: t.titleMedium)),
-            Switch(value: _useManual, onChanged: (v) => setState(() => _useManual = v)),
+            Expanded(
+                child:
+                    Text('Želim sama da postavim cilj', style: t.titleMedium)),
+            Switch(
+                value: _useManual,
+                onChanged: (v) => setState(() => _useManual = v)),
           ]),
           if (_useManual)
-            NumberField(controller: _manual, label: 'Dnevni cilj', suffix: 'kcal', decimal: false, onChanged: refresh),
+            NumberField(
+                controller: _manual,
+                label: 'Dnevni cilj',
+                suffix: 'kcal',
+                decimal: false,
+                onChanged: refresh),
         ];
     }
   }
@@ -242,7 +301,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   List<Widget> _title(TextTheme t, String title, String subtitle) => [
         Text(title, style: t.headlineMedium),
         const SizedBox(height: 6),
-        Text(subtitle, style: t.bodyLarge?.copyWith(color: BloomColors.onSurfaceVariant)),
+        Text(subtitle,
+            style: t.bodyLarge?.copyWith(color: BloomColors.onSurfaceVariant)),
         const SizedBox(height: 20),
       ];
 }

@@ -26,11 +26,17 @@ class _ProgressScreenState extends State<ProgressScreen> {
     final data = AppScope.of(context).data;
     final profile = data.profile!;
     final entries = data.entries;
-    final available = Measure.values.where((m) => entries.any((e) => e.value(m) != null)).toList();
+    final available = Measure.values
+        .where((m) => entries.any((e) => e.value(m) != null))
+        .toList();
     final metric = available.contains(_metric) ? _metric : null;
     final points = metric == null
         ? [for (final e in entries) ChartPoint(e.epochDay, e.weightKg)]
-        : [for (final e in entries) if (e.value(metric) != null) ChartPoint(e.epochDay, e.value(metric)!)];
+        : [
+            for (final e in entries)
+              if (e.value(metric) != null)
+                ChartPoint(e.epochDay, e.value(metric)!)
+          ];
     final unit = metric == null ? 'kg' : 'cm';
     final weight = data.currentWeight ?? profile.startWeightKg;
     final target = Calc.target(profile, weight);
@@ -38,17 +44,22 @@ class _ProgressScreenState extends State<ProgressScreen> {
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
       children: [
-        const ScreenTitle('Napredak', subtitle: 'Gledaj trend, ne pojedinačan dan. 🌸'),
+        const ScreenTitle('Napredak',
+            subtitle: 'Gledaj trend, ne pojedinačan dan. 🌸'),
         const SizedBox(height: 16),
         _TotalLossCard(data: data),
         const SizedBox(height: 16),
         BloomCard(
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(children: [
-                _chip('Kilaža', metric == null, () => setState(() => _metric = null)),
-                for (final m in available) _chip(m.title, metric == m, () => setState(() => _metric = m)),
+                _chip('Kilaža', metric == null,
+                    () => setState(() => _metric = null)),
+                for (final m in available)
+                  _chip(
+                      m.title, metric == m, () => setState(() => _metric = m)),
               ]),
             ),
             const SizedBox(height: 12),
@@ -56,13 +67,17 @@ class _ProgressScreenState extends State<ProgressScreen> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 8),
                 child: Text('Grafikon se pojavljuje posle drugog merenja.',
-                    style: t.bodyMedium?.copyWith(color: BloomColors.onSurfaceVariant)),
+                    style: t.bodyMedium
+                        ?.copyWith(color: BloomColors.onSurfaceVariant)),
               ),
             if (points.isNotEmpty) ...[
               LineChart(points: points),
               const SizedBox(height: 12),
               Row(children: [
-                Expanded(child: StatPill(label: 'Početak', value: '${fmtD(points.first.value)} $unit')),
+                Expanded(
+                    child: StatPill(
+                        label: 'Početak',
+                        value: '${fmtD(points.first.value)} $unit')),
                 const SizedBox(width: 10),
                 Expanded(
                   child: StatPill(
@@ -82,14 +97,19 @@ class _ProgressScreenState extends State<ProgressScreen> {
         ),
         const SizedBox(height: 16),
         BloomCard(
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             const CardTitle('Kalorije ove nedelje', emoji: '🍓'),
             WeekBars(
-              days: [for (var d = widget.today - 6; d <= widget.today; d++) (d, data.day(d).eaten)],
+              days: [
+                for (var d = widget.today - 6; d <= widget.today; d++)
+                  (d, data.day(d).eaten)
+              ],
               target: target,
             ),
             const SizedBox(height: 8),
-            Text('Isprekidana linija je tvoj cilj od ${fmtI(target)} kcal.', style: t.bodySmall),
+            Text('Isprekidana linija je tvoj cilj od ${fmtI(target)} kcal.',
+                style: t.bodySmall),
           ]),
         ),
         const SizedBox(height: 16),
@@ -112,7 +132,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
             fontWeight: FontWeight.w600,
             color: selected ? Colors.white : BloomColors.onSurfaceVariant,
           ),
-          shape: StadiumBorder(side: BorderSide(color: selected ? BloomColors.primary : BloomColors.outline)),
+          shape: StadiumBorder(
+              side: BorderSide(
+                  color: selected ? BloomColors.primary : BloomColors.outline)),
         ),
       );
 }
@@ -132,20 +154,27 @@ class _TotalLossCard extends StatelessWidget {
     var cm = 0.0;
     for (final m in Measure.values) {
       final withValue = data.entries.where((e) => e.value(m) != null);
-      if (withValue.isNotEmpty) cm += withValue.first.value(m)! - withValue.last.value(m)!;
+      if (withValue.isNotEmpty)
+        cm += withValue.first.value(m)! - withValue.last.value(m)!;
     }
     final weeks = (last.epochDay - first.epochDay) ~/ 7;
     final good = kg > 0 || cm > 0;
 
-    Widget big(String value, String label) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(value, style: numberStyle.copyWith(fontSize: 30, color: BloomColors.mint)),
+    Widget big(String value, String label) =>
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(value,
+              style:
+                  numberStyle.copyWith(fontSize: 30, color: BloomColors.mint)),
           Text(label, style: t.bodySmall),
         ]);
 
     return BloomCard(
       color: good ? BloomColors.mintSoft : Colors.white,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(weeks > 0 ? 'Za ${weeksText(weeks, accusative: true)} si izgubila' : 'Tvoj put tek počinje ✨',
+        Text(
+            weeks > 0
+                ? 'Za ${weeksText(weeks, accusative: true)} si izgubila'
+                : 'Tvoj put tek počinje ✨',
             style: t.titleMedium),
         const SizedBox(height: 6),
         Row(children: [
@@ -186,7 +215,8 @@ class _BodyStatsCard extends StatelessWidget {
               '${fmtD(Calc.waistToHip(waist, hips), 2)} · ${Calc.waistToHipLabel(Calc.waistToHip(waist, hips))}'),
         _line(context, 'Bazalni metabolizam',
             '${fmtI(Calc.bmr(latest.weightKg, profile.heightCm, profile.age).round())} kcal'),
-        if (weeks != null && weeks > 0) _line(context, 'Do cilja okvirno', weeksText(weeks.round())),
+        if (weeks != null && weeks > 0)
+          _line(context, 'Do cilja okvirno', weeksText(weeks.round())),
       ]),
     );
   }
@@ -196,7 +226,10 @@ class _BodyStatsCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(children: [
-        Expanded(child: Text(label, style: t.bodyMedium?.copyWith(color: BloomColors.onSurfaceVariant))),
+        Expanded(
+            child: Text(label,
+                style: t.bodyMedium
+                    ?.copyWith(color: BloomColors.onSurfaceVariant))),
         Text(value, style: t.titleMedium),
       ]),
     );
