@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../calc.dart';
 import '../format.dart';
@@ -254,6 +255,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           },
                         ),
                       ]),
+                  ]),
+            ),
+            const SizedBox(height: 16),
+          ],
+          if (!Reminders.supported) ...[
+            BloomCard(
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const CardTitle('Podsetnici', emoji: '⏰'),
+                    Text(
+                      'Dodaj u iPhone Kalendar dva ponavljajuća podsetnika: svako veče u 21h '
+                      'za korake i kalorije, i subotom u 8:30 za merenje. '
+                      'Vreme i dan menjaš posle u Kalendaru.',
+                      style: t.bodyMedium
+                          ?.copyWith(color: BloomColors.onSurfaceVariant),
+                    ),
+                    const SizedBox(height: 12),
+                    OutlinedButton.icon(
+                      onPressed: () => launchUrl(
+                          Uri.base.resolve('podsetnici.ics'),
+                          mode: LaunchMode.externalApplication),
+                      icon: const Icon(Icons.event_available_rounded, size: 18),
+                      label: const Text('Dodaj u Kalendar'),
+                    ),
                   ]),
             ),
             const SizedBox(height: 16),

@@ -294,10 +294,22 @@ class _StepsCard extends StatelessWidget {
         : linked
             ? ' · iz aplikacije Zdravlje'
             : '';
+    // uveče podseti ako koraci za danas još nisu upisani
+    final eveningReminder = !state.steps.available &&
+        day == today() &&
+        DateTime.now().hour >= 19 &&
+        log.steps == 0;
     return BloomCard(
+      color: eveningReminder ? BloomColors.primaryContainer : Colors.white,
       onTap: state.steps.available ? null : () => _manualDialog(context),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         const CardTitle('Koraci', emoji: '👟'),
+        if (eveningReminder)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Text('Kraj dana je — ne zaboravi da upišeš korake 🌙',
+                style: t.titleMedium?.copyWith(color: BloomColors.primary)),
+          ),
         Row(
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
