@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'calc.dart';
 import 'format.dart';
 import 'models.dart';
 import 'theme.dart';
@@ -589,4 +590,42 @@ void showToast(BuildContext context, String text) {
       backgroundColor: BloomColors.onPrimaryContainer,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     ));
+}
+
+/// Objašnjenja ispod kalorijskog cilja kad je tempo preoštar ili je ručni cilj ispod BMR-a.
+class TargetNotes extends StatelessWidget {
+  const TargetNotes({super.key, required this.profile, required this.weightKg});
+
+  final Profile profile;
+  final double weightKg;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = Theme.of(context).textTheme;
+    final bmr = Calc.bmr(weightKg, profile.heightCm, profile.age).round();
+    final manual = profile.manualTargetKcal;
+    final notes = <Widget>[];
+    if (manual == null && Calc.paceCapped(profile, weightKg)) {
+      final kg = Calc.weeklyLossKg(
+          profile, weightKg, Calc.suggestedTarget(profile, weightKg));
+      notes.add(Text(
+        'Tempo „${profile.pace.title}" bi te spustio ispod bazalnog metabolizma, pa je preporuka '
+        'podignuta na ${fmtI(Calc.targetFloor(profile, weightKg))} kcal. Realno je to oko ${fmtD(kg, 2)} kg nedeljno '
+        '— a koraci ubrzavaju. 🌷',
+        style: t.bodySmall,
+      ));
+    }
+    if (manual != null && manual < bmr) {
+      notes.add(Text(
+        'Tvoj cilj je ispod bazalnog metabolizma (${fmtI(bmr)} kcal). Kratko može, ali duže vreme se ne preporučuje.',
+        style: t.bodySmall?.copyWith(color: BloomColors.coral),
+      ));
+    }
+    if (notes.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child:
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: notes),
+    );
+  }
 }

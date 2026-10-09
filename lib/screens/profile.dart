@@ -101,6 +101,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 label: 'Preporuka za mršavljenje',
                 value: '${fmtI(Calc.suggestedTarget(edited, weight))} kcal',
               ),
+              TargetNotes(
+                  profile: edited.copyWith(manualTargetKcal: () => null),
+                  weightKg: weight),
               const SizedBox(height: 6),
               Text(
                   'Računato za tvoju poslednju kilažu (${fmtD(weight)} kg) — ažurira se sa svakim merenjem.',
@@ -124,6 +127,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ? 'Najmanje 800 kcal'
                       : null,
                 ),
+              if (_useManual && edited.manualTargetKcal != null)
+                TargetNotes(profile: edited, weightKg: weight),
             ]),
           ),
           const SizedBox(height: 16),

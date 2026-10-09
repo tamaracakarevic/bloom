@@ -14,8 +14,21 @@ class Calc {
   static int maintenance(Profile p, double weightKg) =>
       (bmr(weightKg, p.heightCm, p.age) * p.activity.factor).round();
 
-  static int suggestedTarget(Profile p, double weightKg) =>
-      max(minKcal, _roundTo10(maintenance(p, weightKg) - p.pace.deficit));
+  /// Preporuka ne ide ispod BMR-a — duže ispod njega telo gubi mišiće i usporava.
+  static int targetFloor(Profile p, double weightKg) =>
+      max(minKcal, _roundUpTo10(bmr(weightKg, p.heightCm, p.age).round()));
+
+  static int suggestedTarget(Profile p, double weightKg) => max(
+      targetFloor(p, weightKg),
+      _roundTo10(maintenance(p, weightKg) - p.pace.deficit));
+
+  /// Izabrani tempo bi spustio unos ispod BMR-a, pa je preporuka podignuta.
+  static bool paceCapped(Profile p, double weightKg) =>
+      maintenance(p, weightKg) - p.pace.deficit < targetFloor(p, weightKg);
+
+  /// Okvirno kg nedeljno pri datom dnevnom unosu (bez koraka).
+  static double weeklyLossKg(Profile p, double weightKg, int target) =>
+      (maintenance(p, weightKg) - target) * 7 / kcalPerKg;
 
   static int target(Profile p, double weightKg) =>
       p.manualTargetKcal ?? suggestedTarget(p, weightKg);
@@ -68,6 +81,7 @@ class Calc {
   }
 
   static int _roundTo10(int v) => ((v + 5) ~/ 10) * 10;
+  static int _roundUpTo10(int v) => ((v + 9) ~/ 10) * 10;
 }
 
 class DaySummary {

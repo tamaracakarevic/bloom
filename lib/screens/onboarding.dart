@@ -270,6 +270,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               Text('dnevno + kalorije koje zaradiš koracima',
                   style: t.bodyMedium
                       ?.copyWith(color: BloomColors.onSurfaceVariant)),
+              TargetNotes(
+                  profile: p.copyWith(manualTargetKcal: () => null),
+                  weightKg: w),
               if (weeks != null && weeks > 0) ...[
                 const SizedBox(height: 10),
                 Text(
@@ -294,6 +297,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 suffix: 'kcal',
                 decimal: false,
                 onChanged: refresh),
+          if (_useManual && p.manualTargetKcal != null)
+            TargetNotes(profile: p, weightKg: w),
         ];
     }
   }

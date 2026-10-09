@@ -38,12 +38,24 @@ void main() {
     expect(Calc.suggestedTarget(tiny, 45), Calc.minKcal);
   });
 
+  test('preporuka ne ide ispod BMR-a kad je tempo preoštar', () {
+    final fast = profile.copyWith(pace: Pace.fast);
+    // 1953 - 750 = 1203 < BMR 1420 -> podiže se na 1420
+    expect(Calc.paceCapped(fast, 70), isTrue);
+    expect(Calc.suggestedTarget(fast, 70), 1420);
+    expect(Calc.paceCapped(profile, 70), isFalse);
+  });
+
   test('ručni cilj ima prednost', () {
-    expect(Calc.target(profile.copyWith(manualTargetKcal: () => 1600), 70), 1600);
+    expect(
+        Calc.target(profile.copyWith(manualTargetKcal: () => 1600), 70), 1600);
   });
 
   test('koraci povećavaju budžet i potrošnju', () {
-    const day = DayLog(epochDay: 1, foods: [FoodItem(id: 1, label: 'a', kcal: 1000)], manualSteps: 10000);
+    const day = DayLog(
+        epochDay: 1,
+        foods: [FoodItem(id: 1, label: 'a', kcal: 1000)],
+        manualSteps: 10000);
     final s = Calc.summarize(profile, 70, day);
     expect(s.stepsKcal, 350);
     expect(s.budget, 1450 + 350);
@@ -52,15 +64,25 @@ void main() {
   });
 
   test('ručni koraci imaju prednost nad automatskim', () {
-    expect(const DayLog(epochDay: 1, manualSteps: 5000, syncedSteps: 9000).steps, 5000);
+    expect(
+        const DayLog(epochDay: 1, manualSteps: 5000, syncedSteps: 9000).steps,
+        5000);
     expect(const DayLog(epochDay: 1, syncedSteps: 9000).steps, 9000);
   });
 
   test('JSON rezervna kopija se vraća bez gubitka', () {
     final data = AppData(
       profile: profile,
-      entries: const [MeasurementEntry(epochDay: 5, weightKg: 69.5, values: {'waist': 78}, note: 'x')],
-      days: {5: const DayLog(epochDay: 5, foods: [FoodItem(id: 1, label: 'Ručak', kcal: 650)], syncedSteps: 8000)},
+      entries: const [
+        MeasurementEntry(
+            epochDay: 5, weightKg: 69.5, values: {'waist': 78}, note: 'x')
+      ],
+      days: {
+        5: const DayLog(
+            epochDay: 5,
+            foods: [FoodItem(id: 1, label: 'Ručak', kcal: 650)],
+            syncedSteps: 8000)
+      },
     );
     final back = AppData.fromJson(data.toJson());
     expect(back.toJson(), data.toJson());
